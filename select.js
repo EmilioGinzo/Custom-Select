@@ -6,7 +6,7 @@ export default class Select {
         this.labelElement = document.createElement('span');
         this.optionsCustomElement = document.createElement('ul');
         setupCustomElement(this);
-        // element.style.display = 'none';
+        element.style.display = 'none';
         element.after(this.customElemet);
     }
 
@@ -16,6 +16,10 @@ export default class Select {
 
     get selectedOptionIndex() {
         return this.options.indexOf(this.selectedOption)
+    }
+
+    get selectedOptionFirstChar() {
+        return this.selectedOption.label.toLowerCase().charAt(0);
     }
 
     selectValue(value) {
@@ -73,7 +77,7 @@ function setupCustomElement(select) {
     });
 
     let debounceTimeout;
-    let serachTerm = '';
+    let searchTerm = '';
     select.customElemet.addEventListener('keydown', e => {
         switch (e.code) {
             case 'Space':
@@ -101,34 +105,37 @@ function setupCustomElement(select) {
                 break;
             default : {
                 clearTimeout(debounceTimeout);
-                if (select.selectedOption.label.toLowerCase().charAt(0)  == e.key.toLowerCase() ) {
-                    serachTerm = e.key
-                    const nextOption = select.options[select.selectedOptionIndex + 1];
-                    if(nextOption?.label.toLowerCase().startsWith(serachTerm)) {
-                        select.selectValue(nextOption.value); 
-                        break;
-                    } else if (nextOption?.label.toLowerCase().startsWith(serachTerm) == false) {
-                        const startOption = select.options.find(option => {
-                            return option.label.toLowerCase().startsWith(serachTerm);
-                        });
-                        if(startOption) {
-                            select.selectValue(startOption.value);
-                            break
-                        }
-                    }
-                } else {
-                    serachTerm += e.key;
-                    console.log(serachTerm)
+                const key = e.key.toLowerCase()
 
+                /**
+                 * Si el key que mete el usuario por teclado es distindo al primer caracter de la opcion seleccionada actual, entonce buscamos lo que el usuario metio, 
+                 * si la key que mete el usuario es igual al primer caracter de la opcion seleccionada actual, entonces nos movemos por las opciones que inicien con el mismo caracter
+                 */
+                if(select.selectedOptionFirstChar  !=  key ) {
+                    searchTerm += key;
                     const searchOption = select.options.find(option => {
-                        return option.label.toLowerCase().startsWith(serachTerm);
+                        return option.label.toLowerCase().startsWith(searchTerm);
                     });
                     if(searchOption) {
                         select.selectValue(searchOption.value);
                     }
+                }else {
+                    searchTerm = key
+                    const nextOption = select.options[select.selectedOptionIndex + 1];
+                    const nextOptionStartsWithKey = nextOption?.label.toLowerCase().startsWith(key);
+                    if(nextOptionStartsWithKey) {
+                        select.selectValue(nextOption.value); 
+                    }else {
+                        const startOption = select.options.find(option => {
+                            return option.label.toLowerCase().startsWith(searchTerm);
+                        });
+                        if(startOption) {
+                            select.selectValue(startOption.value);
+                        }
+                    }
                 }
                 debounceTimeout = setTimeout(() => {
-                    serachTerm = '';
+                    searchTerm = '';
                 }, 500);
                 
             }
