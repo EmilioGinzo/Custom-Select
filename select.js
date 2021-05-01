@@ -87,6 +87,7 @@ function setupCustomElement(select) {
                 break;
             }
             case 'ArrowDown': {
+                e.preventDefault()
                 const nextOption = select.options[select.selectedOptionIndex + 1];
                 if(nextOption) {
                     select.selectValue(nextOption.value); 
