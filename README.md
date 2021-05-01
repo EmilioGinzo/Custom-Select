@@ -10,7 +10,4 @@ tiene las siguientes funciones:
 - se puede mover con las flechas de direccion para seleccionar una opcion, incluso sin desplegar las opciones
 - con "Enter", "Scape", "Escape" cierra las opciones
 - se pueden buscar en las opciones con las letras del teclado
-
-
-falta:
-- hacer el codigo mas leible en la parte de busqueda
+- apretar varias veces la misma letra nos mueve por las opciones que empiezen con dicha letra
