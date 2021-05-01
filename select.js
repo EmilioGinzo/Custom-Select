@@ -6,7 +6,7 @@ export default class Select {
         this.labelElement = document.createElement('span');
         this.optionsCustomElement = document.createElement('ul');
         setupCustomElement(this);
-        element.style.display = 'none';
+        // element.style.display = 'none';
         element.after(this.customElemet);
     }
 
@@ -72,7 +72,7 @@ function setupCustomElement(select) {
         select.optionsCustomElement.classList.remove('show');
     });
 
-    let debounceTimeout
+    let debounceTimeout;
     let serachTerm = '';
     select.customElemet.addEventListener('keydown', e => {
         switch (e.code) {
@@ -80,6 +80,7 @@ function setupCustomElement(select) {
                 select.optionsCustomElement.classList.toggle('show');
                 break;
             case 'ArrowUp': {
+                e.preventDefault()
                 const prevOption = select.options[select.selectedOptionIndex - 1];
                 if(prevOption) {
                     select.selectValue(prevOption.value);
@@ -100,17 +101,36 @@ function setupCustomElement(select) {
                 break;
             default : {
                 clearTimeout(debounceTimeout);
-                serachTerm += e.key;
+                if (select.selectedOption.label.toLowerCase().charAt(0)  == e.key.toLowerCase() ) {
+                    serachTerm = e.key
+                    const nextOption = select.options[select.selectedOptionIndex + 1];
+                    if(nextOption?.label.toLowerCase().startsWith(serachTerm)) {
+                        select.selectValue(nextOption.value); 
+                        break;
+                    } else if (nextOption?.label.toLowerCase().startsWith(serachTerm) == false) {
+                        const startOption = select.options.find(option => {
+                            return option.label.toLowerCase().startsWith(serachTerm);
+                        });
+                        if(startOption) {
+                            select.selectValue(startOption.value);
+                            break
+                        }
+                    }
+                } else {
+                    serachTerm += e.key;
+                    console.log(serachTerm)
+
+                    const searchOption = select.options.find(option => {
+                        return option.label.toLowerCase().startsWith(serachTerm);
+                    });
+                    if(searchOption) {
+                        select.selectValue(searchOption.value);
+                    }
+                }
                 debounceTimeout = setTimeout(() => {
                     serachTerm = '';
                 }, 500);
                 
-                const searchOption = select.options.find(option => {
-                    return option.label.toLowerCase().startsWith(serachTerm);
-                });
-                if(searchOption) {
-                    select.selectValue(searchOption.value);
-                }
             }
         }
     });
