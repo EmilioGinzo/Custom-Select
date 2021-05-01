@@ -13,6 +13,4 @@ tiene las siguientes funciones:
 
 
 falta:
-- cuando se mueve con las flechas de direccion dentro del select, tambien mueve el documento. Evitar que se mueva el documenteo
-- precionar varias veces una misma letra tendria que navegar entre las opciones que empiezan con esa letra
-
+- hacer el codigo mas leible en la parte de busqueda
